@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+    db:
+        image: postgres:latest
+        container_name: db
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: secret
+            POSTGRES_DB: core
+            POSTGRES_PORT: '5432'
+        ports:
+            - '5432:5432'
+        volumes:
+            - .docker/postgres-data:/var/lib/postgresql/data
+
+    web:
+        container_name: web
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '8080:80'
+        volumes:
+            - .docker/apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+        depends_on:
+            - db
+        environment:
+            COMPOSER_ALLOW_SUPERUSER: '1'
