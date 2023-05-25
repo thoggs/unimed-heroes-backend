@@ -22,4 +22,7 @@ docker-compose up -d
 ```
 
 ### Concluído:
-> Agora temos o app rodando localmente no endereço http://localhost:8080/api/heroes
+> Agora temos o app rodando localmente no endereço: http://localhost:8080/api/heroes
+
+### Deployed 
+> Deploy do app no meu serviço pessoal: https://unimed.codesumn.com/api/heroes
