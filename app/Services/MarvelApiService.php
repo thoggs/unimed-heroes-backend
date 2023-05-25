@@ -3,10 +3,16 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class MarvelApiService
 {
-    public function getMarvelHeroes(int | null $limit = 20, int | null $page = 1, int | null $id = null)
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function getMarvelHeroes(int | null $limit = 30, int | null $page = 1, int | null $id = null)
     {
         $cacheKey = 'marvelHeroes.' . $limit . '.' . $page . '.' . $id;
 
