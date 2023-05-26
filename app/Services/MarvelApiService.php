@@ -10,38 +10,42 @@ class MarvelApiService
     {
         $cacheKey = 'marvelHeroes.all';
 
-        return cache()->remember($cacheKey, 1440, function () {
-            $publicKey = env('MARVEL_PUBLIC_KEY');
-            $privateKey = env('MARVEL_PRIVATE_KEY');
-            $ts = time();
-            $stringToHash = $ts . $privateKey . $publicKey;
-            $hash = md5($stringToHash);
-            $basePath = env('MARVEL_BASE_PATH') . '/characters';
-            $offset = 0;
-            $limit = 100;
-            $heroes = [];
+        if (cache()->has($cacheKey)) {
+            return cache()->get($cacheKey);
+        }
 
-            do {
-                $params = [
-                    'ts' => $ts,
-                    'apikey' => $publicKey,
-                    'hash' => $hash,
-                    'limit' => $limit,
-                    'offset' => $offset
-                ];
+        $publicKey = env('MARVEL_PUBLIC_KEY');
+        $privateKey = env('MARVEL_PRIVATE_KEY');
+        $ts = time();
+        $stringToHash = $ts . $privateKey . $publicKey;
+        $hash = md5($stringToHash);
+        $basePath = env('MARVEL_BASE_PATH') . '/characters';
+        $offset = 0;
+        $limit = 100;
+        $heroes = [];
 
-                $url = url($basePath) . '?' . http_build_query($params);
+        do {
+            $params = [
+                'ts' => $ts,
+                'apikey' => $publicKey,
+                'hash' => $hash,
+                'limit' => $limit,
+                'offset' => $offset
+            ];
 
-                $response = Http::get($url);
-                $responseData = $response->json()['data'] ?? [];
+            $url = url($basePath) . '?' . http_build_query($params);
 
-                $heroes = array_merge($heroes, $responseData['results'] ?? []);
+            $response = Http::get($url);
+            $responseData = $response->json()['data'] ?? [];
 
-                $offset += $limit;
+            $heroes = array_merge($heroes, $responseData['results'] ?? []);
 
-            } while ($offset < $responseData['total']);
+            $offset += $limit;
 
-            return $heroes;
-        });
+        } while ($offset < $responseData['total']);
+
+        cache()->put($cacheKey, $heroes);
+
+        return $heroes;
     }
 }
