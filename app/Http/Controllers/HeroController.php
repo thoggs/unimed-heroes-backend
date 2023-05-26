@@ -23,8 +23,8 @@ class HeroController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $perPage = $request->input('per_page');
-            $currentPage = $request->input('current_page');
+            $perPage = $request->input('per_page') ?? 30;
+            $currentPage = $request->input('current_page') ?? 1;
 
             $marvelHeroes = $this->marvelApiService->getMarvelHeroes();
             $combinedHeroes = $this->favoriteModel->combineWithMarvelHeroes($marvelHeroes, $currentPage, $perPage);
