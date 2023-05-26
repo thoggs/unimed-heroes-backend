@@ -74,7 +74,6 @@ class FavoriteModel extends Model
         return $this->paginateHeroes($favoriteHeroes, $perPage, $currentPage);
     }
 
-
     public function saveFavorite(int $heroId): bool
     {
         $favoriteHero = $this::all()->firstWhere('hero_id', $heroId);
