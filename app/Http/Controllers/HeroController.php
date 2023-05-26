@@ -23,11 +23,11 @@ class HeroController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $limit = $request->input('limit');
-            $offset = $request->input('offset');
+            $perPage = $request->input('per_page');
+            $currentPage = $request->input('current_page');
 
-            $marvelHeroes = $this->marvelApiService->getMarvelHeroes($offset ?? 0, $limit);
-            $combinedHeroes = $this->favoriteModel->combineWithMarvelHeroes($marvelHeroes);
+            $marvelHeroes = $this->marvelApiService->getMarvelHeroes();
+            $combinedHeroes = $this->favoriteModel->combineWithMarvelHeroes($marvelHeroes, $currentPage, $perPage);
 
             return response()->json([
                 'status' => 'success',
@@ -61,34 +61,6 @@ class HeroController extends Controller
                     'message' => 'Failed to save favorite',
                     'data' => []
                 ], 500);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                'code' => 500,
-                'message' => $e->getMessage(),
-                'data' => []
-            ]);
-        }
-    }
-
-    public function show(int $id): JsonResponse
-    {
-        try {
-            $marvelHeroes = $this->marvelApiService->getMarvelHeroes(null, null, $id);
-
-            if (count($marvelHeroes) > 0) {
-                $marvelHero = $this->favoriteModel->getHero($marvelHeroes, $id);
-                return response()->json([
-                    'code' => 200,
-                    'message' => 'Hero retrieved successfully',
-                    'data' => $marvelHero
-                ]);
-            } else {
-                return response()->json([
-                    'code' => 404,
-                    'message' => 'Hero not found',
-                    'data' => []
-                ]);
             }
         } catch (Exception $e) {
             return response()->json([

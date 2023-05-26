@@ -12,9 +12,9 @@ class MarvelApiService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getMarvelHeroes(int $offsetParam, int|null $limit = 30, int|null $id = null)
+    public function getMarvelHeroes()
     {
-        $cacheKey = 'marvelHeroes.' . $limit . '.' . $offsetParam . '.' . $id;
+        $cacheKey = 'marvelHeroes.all';
 
         if (cache()->has($cacheKey)) {
             return cache()->get($cacheKey);
@@ -26,27 +26,32 @@ class MarvelApiService
         $stringToHash = $ts . $privateKey . $publicKey;
         $hash = md5($stringToHash);
         $basePath = env('MARVEL_BASE_PATH') . '/characters';
-        $offset = $offsetParam;
+        $offset = 0;
+        $limit = 100;
+        $heroes = [];
 
-        $params = [
-            'ts' => $ts,
-            'apikey' => $publicKey,
-            'hash' => $hash,
-            'limit' => $limit,
-            'offset' => $offset
-        ];
+        do {
+            $params = [
+                'ts' => $ts,
+                'apikey' => $publicKey,
+                'hash' => $hash,
+                'limit' => $limit,
+                'offset' => $offset
+            ];
 
-        if ($id !== null) {
-            $params['id'] = $id;
-        }
+            $url = url($basePath) . '?' . http_build_query($params);
 
-        $url = url($basePath) . '?' . http_build_query($params);
+            $response = Http::get($url);
+            $responseData = $response->json()['data'] ?? [];
 
-        $response = Http::get($url);
-        $data = $response->json()['data'] ?? [];
+            $heroes = array_merge($heroes, $responseData['results'] ?? []);
 
-        cache()->put($cacheKey, $data, 1440);
+            $offset += $limit;
 
-        return $data;
+        } while ($offset < $responseData['total']);
+
+        cache()->put($cacheKey, $heroes, 1440);
+
+        return $heroes;
     }
 }

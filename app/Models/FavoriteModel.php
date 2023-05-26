@@ -4,53 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class FavoriteModel extends Model
 {
     use HasFactory;
+
     protected $fillable = ['hero_id', 'votes'];
     protected $guarded = ['id'];
 
-    private function mountResponse(?array $marvelHeroes, ?int $heroId = null): array
+    private function mountResponse(?array $marvelHeroes): array
     {
         $favoriteHeroes = [];
-        $offset = 0;
-        $limit = 0;
-        $total = 0;
-        $count = 0;
 
-        if ($marvelHeroes !== null && isset($marvelHeroes['results'])) {
-            $offset = $marvelHeroes['offset'] + 1;
-            $limit = $marvelHeroes['limit'];
-            $total = $marvelHeroes['total'];
-            $count = $marvelHeroes['count'];
-
-            foreach ($marvelHeroes['results'] as $marvelHero) {
+        if ($marvelHeroes !== null) {
+            foreach ($marvelHeroes as $marvelHero) {
                 $id = $marvelHero['id'];
                 $heroName = $marvelHero['name'];
                 $description = $marvelHero['description'];
                 $thumbnailPath = $marvelHero['thumbnail']['path'];
                 $thumbnailExtension = $marvelHero['thumbnail']['extension'];
                 $thumbnailUrl = $thumbnailPath . '.' . $thumbnailExtension;
-
-                if ($id === $heroId) {
-                    $favoriteHero = $this::all()->firstWhere('hero_id', $heroId);
-
-                    if ($favoriteHero) {
-                        $votes = $favoriteHero->votes;
-                    } else {
-                        $votes = 0;
-                    }
-
-                    return [
-                        'id' => $id,
-                        'name' => $heroName,
-                        'thumbnail' => $thumbnailUrl,
-                        'votes' => $votes,
-                        'description' => $description,
-                    ];
-                }
 
                 $favoriteHero = $this::all()->firstWhere('hero_id', $id);
 
@@ -67,31 +43,37 @@ class FavoriteModel extends Model
                     'votes' => $votes,
                     'description' => $description,
                 ];
-
-                usort($favoriteHeroes, function ($a, $b) {
-                    return $b['votes'] - $a['votes'];
-                });
             }
+
+            usort($favoriteHeroes, function ($a, $b) {
+                return $b['votes'] - $a['votes'];
+            });
         }
 
-        return [
-            'page' => $offset,
-            'limit' => $limit,
-            'total' => $total,
-            'count' => $count,
-            'data' => $favoriteHeroes
-        ];
+        return $favoriteHeroes;
     }
 
-    public function combineWithMarvelHeroes(array $marvelHeroes): array
+    private function paginateHeroes(array $favoriteHeroes, int $perPage, int $currentPage): LengthAwarePaginator
     {
-        return $this->mountResponse($marvelHeroes);
+        $offset = ($currentPage - 1) * $perPage;
+        $items = array_slice($favoriteHeroes, $offset, $perPage);
+        $total = count($favoriteHeroes);
+
+        return new LengthAwarePaginator(
+            new Collection($items),
+            $total,
+            $perPage,
+            $currentPage,
+            ['path' => url()->current()]
+        );
     }
 
-    public function getHero(array $marvelHeroes, int $heroId): array
+    public function combineWithMarvelHeroes(array $marvelHeroes, int $currentPage, int $perPage): LengthAwarePaginator
     {
-        return $this->mountResponse($marvelHeroes, $heroId);
+        $favoriteHeroes = $this->mountResponse($marvelHeroes);
+        return $this->paginateHeroes($favoriteHeroes, $perPage, $currentPage);
     }
+
 
     public function saveFavorite(int $heroId): bool
     {
