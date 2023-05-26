@@ -26,7 +26,7 @@ class MarvelApiService
         $stringToHash = $ts . $privateKey . $publicKey;
         $hash = md5($stringToHash);
         $basePath = env('MARVEL_BASE_PATH') . '/characters';
-        $offset = ($page - 1);
+        $offset = ($page - 1) * $limit;
 
         $params = [
             'ts' => $ts,
