@@ -12,7 +12,7 @@ class MarvelApiService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getMarvelHeroes(int | null $limit = 30, int | null $offsetParam = 0, int | null $id = null)
+    public function getMarvelHeroes(int $offsetParam, int|null $limit = 30, int|null $id = null)
     {
         $cacheKey = 'marvelHeroes.' . $limit . '.' . $offsetParam . '.' . $id;
 
@@ -26,7 +26,7 @@ class MarvelApiService
         $stringToHash = $ts . $privateKey . $publicKey;
         $hash = md5($stringToHash);
         $basePath = env('MARVEL_BASE_PATH') . '/characters';
-        $offset = $offsetParam * $limit;
+        $offset = $offsetParam;
 
         $params = [
             'ts' => $ts,

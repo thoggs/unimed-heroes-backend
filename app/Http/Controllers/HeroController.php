@@ -26,7 +26,7 @@ class HeroController extends Controller
             $limit = $request->input('limit');
             $offset = $request->input('offset');
 
-            $marvelHeroes = $this->marvelApiService->getMarvelHeroes($limit, $offset ?? 1);
+            $marvelHeroes = $this->marvelApiService->getMarvelHeroes($offset ?? 0, $limit);
             $combinedHeroes = $this->favoriteModel->combineWithMarvelHeroes($marvelHeroes);
 
             return response()->json([
