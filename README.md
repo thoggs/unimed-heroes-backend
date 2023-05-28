@@ -21,7 +21,7 @@
 docker-compose up -d  
 ```
 
-1) #### Após subir os containers no Docker, a aplicação demora um pouco para criar um cache de todos os dados da API da Marvel.
+2) #### Após subir os containers no Docker, a aplicação inicia o processo de cache, demora um pouco para criar um cache de todos os dados da API da Marvel.
 
 ### Concluído:
 > Agora temos o app rodando localmente no endereço: http://localhost:8080/api/heroes
