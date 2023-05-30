@@ -13,7 +13,7 @@
 - [x] Ter o [GIT](https://git-scm.com/downloads) instalado
 - [x] Conexão com a internet
 
-### Clonando e subindo um container Docker com Apache
+### Clonando e subindo um container Docker
 
 1) #### Rode o comando em um terminal Linux/macOS ou Prompt de comando do Windows:
 
