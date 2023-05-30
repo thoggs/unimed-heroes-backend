@@ -13,7 +13,7 @@
 - [x] Ter o [GIT](https://git-scm.com/downloads) instalado
 - [x] Conexão com a internet
 
-### Clonando e subindo um container Docker com Apache na porta 8080
+### Clonando e subindo um container Docker com Apache
 
 1) #### Rode o comando em um terminal Linux/macOS ou Prompt de comando do Windows:
 
