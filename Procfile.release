@@ -1,3 +1,0 @@
-web: php artisan migrate
-
-web: php artisan marvel:fetch-heroes
