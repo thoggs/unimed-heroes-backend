@@ -13,7 +13,7 @@
 - [x] Ter o [GIT](https://git-scm.com/downloads) instalado
 - [x] Conexão com a internet
 
-### Clonando e subindo um container Docker com Apache na porta 8080
+### Clonando e subindo os containers Docker
 
 1) #### Rode o comando em um terminal Linux/macOS ou Prompt de comando do Windows:
 
@@ -21,7 +21,7 @@
 docker-compose up -d  
 ```
 
-2) #### Após subir os containers no Docker, a aplicação inicia o processo de cache, demora um pouco para criar um cache de todos os dados da API da Marvel.
+2) #### Após subir os containers no Docker, a aplicação inicia o processo de cache, demora um pouco para criar um cache (com validade de 24hrs) de todos os dados da API da Marvel.
 
 ### Concluído:
 > Agora temos o app rodando localmente no endereço: http://localhost:8080/api/heroes
