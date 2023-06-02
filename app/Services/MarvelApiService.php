@@ -3,9 +3,15 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class MarvelApiService
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function getMarvelHeroes()
     {
         $cacheKey = 'marvelHeroes.all';
@@ -43,8 +49,6 @@ class MarvelApiService
             $offset += $limit;
 
         } while ($offset < $responseData['total']);
-
-        cache()->put($cacheKey, $heroes);
 
         return $heroes;
     }
