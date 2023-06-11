@@ -3,21 +3,27 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class MarvelApiService
 {
+    protected CacheRepository $cache;
+
+    public function __construct(CacheRepository $cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws InvalidArgumentException
      */
     public function getMarvelHeroes()
     {
         $cacheKey = 'marvelHeroes.all';
 
-        if (cache()->has($cacheKey)) {
-            return cache()->get($cacheKey);
+        if ($this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
         }
 
         $publicKey = env('MARVEL_PUBLIC_KEY');
