@@ -7,6 +7,7 @@ use App\Services\MarvelApiService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class HeroController extends Controller
@@ -35,6 +36,12 @@ class HeroController extends Controller
                 'model' => $combinedHeroes
             ], ResponseAlias::HTTP_OK);
         } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred',
+                'error' => $e->getMessage()
+            ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (InvalidArgumentException $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred',
