@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
+use Http;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Psr\SimpleCache\InvalidArgumentException;
 
